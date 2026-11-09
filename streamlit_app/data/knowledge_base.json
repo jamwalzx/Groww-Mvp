@@ -1,0 +1,75 @@
+{
+  "version": "1.0",
+  "facts": [
+    {
+      "id": "K1",
+      "summary": "Change date or amount in Groww",
+      "detail": "Go to Mutual Funds, then SIPs tab, select the SIP, tap Edit SIP or Change Amount/Date, update, review, and confirm.",
+      "steps": [
+        "Open Mutual Funds → SIPs tab",
+        "Select your SIP",
+        "Tap Edit SIP / Change Amount/Date",
+        "Update the value",
+        "Review and confirm"
+      ],
+      "source_url": "https://groww.in/help/mutual-funds/mf-sip/how-to-change-sip-date-or-amount",
+      "source_label": "Groww Help: Change SIP Date or Amount"
+    },
+    {
+      "id": "K2",
+      "summary": "Edit window timing note",
+      "detail": "If the next instalment is within 2 working days, a change to date or amount applies only to future instalments. The confirmation screen shows the exact timing.",
+      "steps": [],
+      "source_url": "https://groww.in/help/mutual-funds/mf-sip/how-to-change-sip-date-or-amount",
+      "source_label": "Groww Help: Change SIP Date or Amount"
+    },
+    {
+      "id": "K3",
+      "summary": "Skip a single instalment",
+      "detail": "Open SIPs, select your SIP, tap Edit SIP, choose Skip Installment, review the month, confirm.",
+      "steps": [
+        "Open SIPs",
+        "Select your SIP",
+        "Tap Edit SIP",
+        "Choose Skip Installment",
+        "Review the month",
+        "Confirm"
+      ],
+      "source_url": "https://groww.in/blog/how-to-edit-sip-on-groww",
+      "source_label": "Groww Blog: How to Edit SIP on Groww"
+    },
+    {
+      "id": "K3b",
+      "summary": "Skip timing rules (feature-flagged)",
+      "detail": "Skip requests must be made at least 2 working days before the SIP date. If made later, that month's payment is still taken and the skip applies from next month. The SIP resumes automatically.",
+      "steps": [],
+      "source_url": null,
+      "source_label": "Internal config — SKIP_RULES_VERIFIED"
+    },
+    {
+      "id": "K4",
+      "summary": "Failed debit bank charge",
+      "detail": "A failed SIP debit can cost a bank charge of roughly Rs 250 to Rs 750 plus 18% GST per failed debit, depending on the bank.",
+      "steps": [],
+      "source_url": "https://www.businesstoday.in/mutual-funds/story/sip-failures-on-nach-mandate-can-cost-you-up-to-rs-2950-per-month-heres-how-524935-2026-04-09",
+      "source_label": "Business Today: SIP Failures on NACH Mandate"
+    },
+    {
+      "id": "K5",
+      "summary": "Repeated failures can close the SIP",
+      "detail": "Several consecutive failed instalments can lead to a SIP being closed (commonly three for monthly SIPs; rules can vary).",
+      "steps": [],
+      "source_url": "https://www.indmoney.com/blog/mutual-funds/sip-stoppage-ratio-explained",
+      "source_label": "INDmoney: SIP Stoppage Ratio Explained"
+    },
+    {
+      "id": "K6",
+      "summary": "Out of scope — decline and redirect to Groww Help",
+      "detail": "Not covered by this tool: cancelling a SIP, a separate pause feature, refunds, allowed calendar dates, minimum amounts, expected returns, which fund or amount to choose.",
+      "steps": [],
+      "source_url": "https://groww.in/help",
+      "source_label": "Groww Help Desk"
+    }
+  ]
+}
+

@@ -1,0 +1,10 @@
+id,section,input_text,expected_levers,expected_situation_type,should_refuse,source,notes
+gc-01,lever_coach,"salary 10 tarikh ko aati hai par SIP 5 ko kat jaata hai",change_date,timing_gap,false,written_by_me,Classic Hinglish timing-gap — salary after SIP date
+gc-02,lever_coach,"this month I have a big expense – car repair",skip_one,one_off_month,false,written_by_me,One-off English case — single tough month
+gc-03,lever_coach,"my SIP amount feels too heavy every month",change_amount,recurring_squeeze,false,written_by_me,Recurring squeeze — never advise on amount
+gc-04,lever_coach,"which fund should I invest in",none_applicable,advice_request,true,written_by_me,Advice request — must refuse with help link
+gc-05,lever_coach,"I want to cancel my SIP",none_applicable,out_of_scope,true,written_by_me,Cancel intent — K6 applies — redirect to Groww Help
+gc-06,plan_b,"change my SIP date to after the 15th",change_date,,false,written_by_me,Valid Plan B using change_date lever
+gc-07,plan_b,"pause my SIP for 3 months",none,,false,written_by_me,Unsupported feature — must offer skip_one rewrite
+gc-08,plan_b,"I will stop the SIP if money is tight",none,,true,written_by_me,Cancel intent — do not create card — show levers + Help
+

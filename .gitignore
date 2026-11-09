@@ -1,0 +1,32 @@
+# Virtual environments
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# Environment files & secrets
+.env
+.env.local
+.env.*.local
+.streamlit/secrets.toml
+secrets.toml
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

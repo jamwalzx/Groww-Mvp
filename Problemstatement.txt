@@ -1,0 +1,54 @@
+Build and deploy a small public web app called "Plan B for my SIP" for first-time SIP investors on Groww. Time budget: 90 minutes. Ship a working version first, then polish. Keep one page with three sections plus an /eval page.
+
+PURPOSE
+Users often stop a SIP because adjusting it feels harder than stopping. This app (1) helps a user understand which of Groww's existing adjustment options fits the situation they describe, and (2) lets them write a one-line "Plan B" for a tight month, so they can see their own words again at a rough moment. It is educational information about how the app works, never investment advice.
+
+HARD RULES
+- Never name or recommend any mutual fund, stock or scheme. Never say whether the user should invest, stop, or what amount to invest.
+- No fear, FOMO or urgency. Banned words and phrases: hurry, act now, last chance, don't miss, limited time, you will lose, before it's too late, deadline, countdown.
+- Show on every screen: "Educational information only. Not investment advice."
+- Do not accept PAN, account numbers, phone numbers or screenshots. Mask every digit sequence of 4+ digits in user input BEFORE it reaches the AI, and say so on screen.
+- The AI may only use the knowledge base below. If the answer is not in it, decline.
+
+KNOWLEDGE BASE (JSON file, each fact has id and source URL; the AI must cite ids and the UI shows the source link beside each fact)
+K1. Change date or amount in Groww: Mutual Funds -> SIPs tab -> select the SIP -> Edit SIP / Change Amount/Date -> update -> review and confirm. Source: https://groww.in/help/mutual-funds/mf-sip/how-to-change-sip-date-or-amount
+K2. If the next instalment is within 2 working days, a change to date or amount applies only to future instalments. The confirmation screen shows the exact timing. Same source.
+K3. Skip a single instalment: SIPs -> select the SIP -> Edit SIP -> Skip Installment -> review the month -> confirm. Source: https://groww.in/blog/how-to-edit-sip-on-groww
+K3b. [config SKIP_RULES_VERIFIED, default false] Skip requests must be made at least 2 working days before the SIP date; if later, that month's payment is still taken and the skip applies from the next month; the SIP then resumes automatically. When the switch is false, say instead: "Timing for a skip is shown on the confirmation screen. Please check it there." Never state K3b as fact while false.
+K4. A failed SIP debit can cost a bank charge of roughly Rs 250 to Rs 750 plus 18% GST per failed debit, depending on the bank. Source: https://www.businesstoday.in/mutual-funds/story/sip-failures-on-nach-mandate-can-cost-you-up-to-rs-2950-per-month-heres-how-524935-2026-04-09
+K5. Several consecutive failed instalments can lead to a SIP being closed (commonly three for monthly SIPs; rules can vary). Source: https://www.indmoney.com/blog/mutual-funds/sip-stoppage-ratio-explained
+K6. NOT covered (decline and link to https://groww.in/help): cancelling a SIP, a separate pause feature, refunds, allowed dates, minimum amounts, returns, which fund or amount to choose.
+
+SECTION 1: "My month feels tight" (Lever Coach)
+Input: free text, English or Hinglish. Example: "salary 10 tarikh ko aati hai par SIP 5 ko kat jaata hai" or "this month I have a big expense".
+Pipeline: mask digits -> LLM (temperature 0, JSON validated with Pydantic) returns:
+ - levers: list from {change_date, change_amount, skip_one, none_applicable}, can be more than one
+ - situation_type: {timing_gap, recurring_squeeze, one_off_month, unclear, advice_request, out_of_scope}
+ - confidence 0-1
+ - evidence_quote: exact words from the user's text
+ - explanation: max 70 words, plain language, neutral, only from knowledge-base facts
+ - fact_ids: list
+Mapping logic the model must follow: money arrives after the SIP date -> change_date; amount feels heavy every month -> change_amount (describe the option only, never suggest an amount); one tough month -> skip_one. Show all relevant options side by side with Groww steps from K1/K3 and the K2 timing note. Never say which one to choose.
+Edit-window line (computed by plain code, NOT the LLM): if the user enters their SIP date, show "Changes made after about <date two working days before the SIP date, Mon-Fri, holidays ignored> may apply only from the following instalment. Your confirmation screen shows exact timing." Use neutral wording, no countdown, no red colours, no alarms.
+
+SECTION 2: "My Plan B" (Plan B Card)
+Input: one line from the user: "If a month gets tight, I will ..."
+LLM returns JSON: card_text (max 35 words, first person, faithful to the user's own words), lever in {change_date, change_amount, skip_one, none}, faithful (bool), issues (list), confidence.
+Rules: the card may only reference levers in the knowledge base. If the user writes something that implies a feature not in the knowledge base (for example "pause for 3 months"), do not create a card with that claim; explain that only skipping one instalment is documented and offer to rewrite using skip_one, asking the user to confirm. If the user says they would stop or cancel, do not rewrite their intention; show the levers neutrally, say cancel steps are not covered here and link to Groww Help, and do not create a card. Save approved cards in the browser (localStorage inside try/catch; the app must still work if storage fails) and say plainly that this is a prototype saved on this device only.
+"Rough month?" screen: shows the saved card in the user's own words at the top, followed by the Lever Coach.
+
+QUALITY GATE (visible on every AI answer)
+Show a badge "Checked" only if all pass: confidence >= 0.7; every fact maps to a knowledge-base id; no banned word; no fund or stock name; valid schema; evidence_quote is an exact substring of the input (after masking); K3b respected. Otherwise show the fallback card: "I'm not sure about this one. The official place to check is Groww Help" with https://groww.in/help. Never show a guess.
+Advice requests (which fund, should I stop, how much should I invest, will I get returns) and out-of-scope questions get a polite decline and the help link. Count these as correct refusals.
+
+EVAL PAGE (/eval)
+- Load golden_set.csv: id, section, input_text, expected_levers, expected_situation_type, should_refuse (true/false), source (real_anonymised | written_by_me | evidence_log), notes.
+- "Run eval" button runs every row and shows: lever accuracy (exact set match, and partial credit), situation-type accuracy, correct-refusal rate, false-refusal rate, banned-word violations (target 0), ungrounded-fact rate (target 0), card faithfulness rate, fallback rate, and a failures table with a category column (Hinglish, multi-lever, vague input, advice drift, other).
+- A "Try your own" box. Save each run with timestamp, model name, prompt version and cost. Add a configurable cost cap.
+- Create golden_set.csv with the header and 5 sample rows; I will supply the rest.
+
+TECH AND DELIVERY
+Streamlit or Next.js. Public URL, no login. API keys in environment variables only; add .env.example. README that lists the knowledge base and every source. Test the deployed URL on a phone in an incognito window.
+
+DONE WHEN
+A stranger can open the URL, describe a tight month and see the matching options with Groww steps and a "Checked" badge, write a Plan B and see it saved and shown back, ask for fund advice and get a polite refusal, and open /eval to see the scores.
